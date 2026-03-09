@@ -1,0 +1,28 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://gridops.com/telemetry"
+           targetNamespace="http://gridops.com/telemetry"
+           elementFormDefault="qualified">
+
+    <xs:element name="GetTelemetryRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="assetTag" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GetTelemetryResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="assetTag"           type="xs:string"/>
+                <xs:element name="timestamp"          type="xs:dateTime"/>
+                <xs:element name="temperatureCelsius" type="xs:decimal"/>
+                <xs:element name="loadPercent"        type="xs:decimal"/>
+                <xs:element name="voltageKv"          type="xs:decimal"/>
+                <xs:element name="powerOutputMw"      type="xs:decimal"/>
+                <xs:element name="status"             type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

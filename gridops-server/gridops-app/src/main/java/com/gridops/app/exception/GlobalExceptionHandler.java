@@ -1,5 +1,7 @@
 package com.gridops.app.exception;
 
+import com.gridops.integration.service.TelemetryAdapterService;
+
 import jakarta.persistence.EntityNotFoundException;
 
 import org.slf4j.Logger;
@@ -66,6 +68,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException ex) {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(TelemetryAdapterService.TelemetryUnavailableException.class)
+    public ResponseEntity<Map<String, Object>> handleTelemetryUnavailable(
+            TelemetryAdapterService.TelemetryUnavailableException ex) {
+        return buildResponse(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

@@ -5,28 +5,34 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.gridops</groupId>
-        <artifactId>gridops-server</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.5</version>
+        <relativePath/>
     </parent>
 
-    <artifactId>gridops-integration</artifactId>
-    <name>GridOps Integration</name>
-    <description>SOAP-to-REST adapter for legacy telemetry systems</description>
+    <groupId>com.gridops</groupId>
+    <artifactId>gridops-soap-mock</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <name>GridOps SOAP Mock</name>
+    <description>Standalone mock SOAP telemetry service simulating a legacy utility data provider</description>
+
+    <properties>
+        <java.version>17</java.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-web-services</artifactId>
         </dependency>
 
-        <!-- Spring-WS client for SOAP calls -->
         <dependency>
-            <groupId>org.springframework.ws</groupId>
-            <artifactId>spring-ws-core</artifactId>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
         </dependency>
 
-        <!-- JAXB runtime (removed from JDK since Java 11) -->
+        <!-- JAXB runtime for Jakarta EE (Java 17) -->
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
@@ -45,7 +51,12 @@
 
     <build>
         <plugins>
-            <!-- Generate JAXB classes from XSD (same schema as soap-mock) -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Generate JAXB classes from XSD -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>

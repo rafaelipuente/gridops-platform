@@ -24,6 +24,8 @@ gridops:
   jwt:
     secret: ${GRIDOPS_JWT_SECRET:YZJAWe8BsDnrkNTrwhusdv2B4UHK86eHoDTOVLjBI1U=}
     expiration-ms: 86400000
+  telemetry:
+    soap-url: ${GRIDOPS_TELEMETRY_URL:http://localhost:8081/ws}
 
 springdoc:
   api-docs:

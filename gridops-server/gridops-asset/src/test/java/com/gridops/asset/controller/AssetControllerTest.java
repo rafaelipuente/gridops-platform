@@ -13,6 +13,8 @@ import com.gridops.asset.service.InspectionService;
 import com.gridops.auth.dto.UserSummaryDto;
 import com.gridops.auth.entity.Role;
 import com.gridops.auth.service.UserService;
+import com.gridops.integration.dto.TelemetryDto;
+import com.gridops.integration.service.TelemetryAdapterService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -68,6 +70,13 @@ class AssetControllerTest {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("status", 400, "error", ex.getMessage()));
         }
+
+        @ExceptionHandler(TelemetryAdapterService.TelemetryUnavailableException.class)
+        public ResponseEntity<Map<String, Object>> handleTelemetryUnavailable(
+                TelemetryAdapterService.TelemetryUnavailableException ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body(Map.of("status", 503, "error", ex.getMessage()));
+        }
     }
 
     @Autowired
@@ -84,6 +93,9 @@ class AssetControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private TelemetryAdapterService telemetryAdapterService;
 
     private static final Instant NOW = Instant.now();
 
@@ -317,5 +329,35 @@ class AssetControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden());
+    }
+
+    // --- GET /api/assets/{id}/telemetry ---
+
+    @Test
+    @WithMockUser
+    void getTelemetry_returnsReading() throws Exception {
+        when(assetService.findById(1L)).thenReturn(sampleAssetResponse());
+        when(telemetryAdapterService.getTelemetry("SUB-PDX-001"))
+                .thenReturn(new TelemetryDto("SUB-PDX-001", NOW,
+                        new BigDecimal("65.3"), new BigDecimal("72.1"),
+                        new BigDecimal("121.50"), new BigDecimal("45.20"), "NORMAL"));
+
+        mockMvc.perform(get("/api/assets/1/telemetry"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.assetTag").value("SUB-PDX-001"))
+                .andExpect(jsonPath("$.temperatureCelsius").value(65.3))
+                .andExpect(jsonPath("$.status").value("NORMAL"));
+    }
+
+    @Test
+    @WithMockUser
+    void getTelemetry_serviceDown_returns503() throws Exception {
+        when(assetService.findById(1L)).thenReturn(sampleAssetResponse());
+        when(telemetryAdapterService.getTelemetry("SUB-PDX-001"))
+                .thenThrow(new TelemetryAdapterService.TelemetryUnavailableException(
+                        "Telemetry service is currently unavailable", new RuntimeException()));
+
+        mockMvc.perform(get("/api/assets/1/telemetry"))
+                .andExpect(status().isServiceUnavailable());
     }
 }
