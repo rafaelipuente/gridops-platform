@@ -10,6 +10,7 @@ import com.gridops.asset.repository.AssetRepository;
 import com.gridops.auth.dto.UserSummaryDto;
 import com.gridops.auth.entity.Role;
 import com.gridops.auth.service.UserService;
+import com.gridops.integration.service.TelemetryAdapterService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -39,6 +40,9 @@ class AssetServiceTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private TelemetryAdapterService telemetryAdapterService;
 
     @InjectMocks
     private AssetService assetService;

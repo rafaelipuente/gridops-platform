@@ -8,6 +8,8 @@ import com.gridops.asset.entity.AssetStatus;
 import com.gridops.asset.entity.AssetType;
 import com.gridops.asset.repository.AssetRepository;
 import com.gridops.auth.service.UserService;
+import com.gridops.integration.dto.TelemetryDto;
+import com.gridops.integration.service.TelemetryAdapterService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -25,10 +27,13 @@ public class AssetService {
 
     private final AssetRepository assetRepository;
     private final UserService userService;
+    private final TelemetryAdapterService telemetryAdapterService;
 
-    public AssetService(AssetRepository assetRepository, UserService userService) {
+    public AssetService(AssetRepository assetRepository, UserService userService,
+                        TelemetryAdapterService telemetryAdapterService) {
         this.assetRepository = assetRepository;
         this.userService = userService;
+        this.telemetryAdapterService = telemetryAdapterService;
     }
 
     @Transactional
@@ -124,6 +129,11 @@ public class AssetService {
 
         String username = userService.findById(asset.getCreatedBy()).getUsername();
         return AssetResponse.fromEntity(asset, username);
+    }
+
+    public TelemetryDto getTelemetry(Long assetId) {
+        Asset asset = loadAsset(assetId);
+        return telemetryAdapterService.getTelemetry(asset.getAssetTag());
     }
 
     public long countByStatus(AssetStatus status) {

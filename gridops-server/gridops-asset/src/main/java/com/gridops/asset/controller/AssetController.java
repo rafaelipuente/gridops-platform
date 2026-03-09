@@ -10,7 +10,6 @@ import com.gridops.asset.service.AssetService;
 import com.gridops.asset.service.InspectionService;
 import com.gridops.auth.service.UserService;
 import com.gridops.integration.dto.TelemetryDto;
-import com.gridops.integration.service.TelemetryAdapterService;
 
 import jakarta.validation.Valid;
 
@@ -38,16 +37,13 @@ public class AssetController {
     private final AssetService assetService;
     private final InspectionService inspectionService;
     private final UserService userService;
-    private final TelemetryAdapterService telemetryAdapterService;
 
     public AssetController(AssetService assetService,
                            InspectionService inspectionService,
-                           UserService userService,
-                           TelemetryAdapterService telemetryAdapterService) {
+                           UserService userService) {
         this.assetService = assetService;
         this.inspectionService = inspectionService;
         this.userService = userService;
-        this.telemetryAdapterService = telemetryAdapterService;
     }
 
     @GetMapping
@@ -88,9 +84,7 @@ public class AssetController {
 
     @GetMapping("/{id}/telemetry")
     public ResponseEntity<TelemetryDto> getTelemetry(@PathVariable Long id) {
-        AssetResponse asset = assetService.findById(id);
-        TelemetryDto telemetry = telemetryAdapterService.getTelemetry(asset.getAssetTag());
-        return ResponseEntity.ok(telemetry);
+        return ResponseEntity.ok(assetService.getTelemetry(id));
     }
 
     @GetMapping("/{id}/inspections")
