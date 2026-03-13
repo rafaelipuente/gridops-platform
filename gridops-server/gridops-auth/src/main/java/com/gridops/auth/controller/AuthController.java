@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -39,5 +41,10 @@ public class AuthController {
     public ResponseEntity<UserSummaryDto> me(@AuthenticationPrincipal UserDetails userDetails) {
         UserSummaryDto user = userService.findByUsername(userDetails.getUsername());
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/engineers")
+    public ResponseEntity<List<UserSummaryDto>> engineers() {
+        return ResponseEntity.ok(userService.findEngineers());
     }
 }

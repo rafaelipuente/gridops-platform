@@ -1,0 +1,165 @@
+@if (loading) {
+  <div class="loading">Loading incident...</div>
+}
+
+@if (error) {
+  <div class="error-message">{{ error }}</div>
+}
+
+@if (!loading && !error && incident) {
+  <div class="page-header">
+    <div class="page-header-row">
+      <div>
+        <h1 class="incident-title">{{ incident.incidentNumber }} — {{ incident.title }}</h1>
+        <div class="badges">
+          <app-status-badge [status]="incident.severity"></app-status-badge>
+          <app-status-badge [status]="incident.status"></app-status-badge>
+        </div>
+      </div>
+      <a routerLink="/incidents" class="btn btn-secondary">Back to Incidents</a>
+    </div>
+  </div>
+
+  @if (actionError) {
+    <div class="error-message action-msg">{{ actionError }}</div>
+  }
+  @if (actionSuccess) {
+    <div class="success-message action-msg">{{ actionSuccess }}</div>
+  }
+
+  <div class="detail-grid">
+    <div class="card detail-card">
+      <h2>Details</h2>
+      <dl class="detail-list">
+        <div class="dl-row">
+          <dt>Description</dt>
+          <dd>{{ incident.description || '—' }}</dd>
+        </div>
+        <div class="dl-row">
+          <dt>Related Asset</dt>
+          <dd>
+            @if (incident.assetId && incident.assetTag) {
+              <a [routerLink]="['/assets', incident.assetId]">{{ incident.assetTag }}</a>
+            } @else {
+              —
+            }
+          </dd>
+        </div>
+        <div class="dl-row">
+          <dt>Reported By</dt>
+          <dd>{{ incident.reportedByUsername }}</dd>
+        </div>
+        <div class="dl-row">
+          <dt>Assigned To</dt>
+          <dd>{{ incident.assignedToUsername || 'Unassigned' }}</dd>
+        </div>
+        <div class="dl-row">
+          <dt>Created</dt>
+          <dd>{{ incident.createdAt | date:'medium' }}</dd>
+        </div>
+        <div class="dl-row">
+          <dt>Updated</dt>
+          <dd>{{ incident.updatedAt | date:'medium' }}</dd>
+        </div>
+        @if (incident.resolvedAt) {
+          <div class="dl-row">
+            <dt>Resolved</dt>
+            <dd>{{ incident.resolvedAt | date:'medium' }}</dd>
+          </div>
+        }
+        @if (incident.closedAt) {
+          <div class="dl-row">
+            <dt>Closed</dt>
+            <dd>{{ incident.closedAt | date:'medium' }}</dd>
+          </div>
+        }
+        @if (incident.resolutionNotes) {
+          <div class="dl-row">
+            <dt>Resolution Notes</dt>
+            <dd class="resolution-notes">{{ incident.resolutionNotes }}</dd>
+          </div>
+        }
+      </dl>
+    </div>
+
+    <div class="card actions-card">
+      <h2>Actions</h2>
+
+      @if (validTransitions.length > 0) {
+        <div class="action-section">
+          <h3>Change Status</h3>
+          <div class="action-form">
+            <select [(ngModel)]="selectedTransition" name="transition">
+              <option value="">Select new status</option>
+              @for (t of validTransitions; track t) {
+                <option [value]="t">{{ statusLabel(t) }}</option>
+              }
+            </select>
+
+            @if (requiresResolutionNotes) {
+              <textarea [(ngModel)]="resolutionNotes" name="resNotes"
+                        rows="3" placeholder="Resolution notes (required)"></textarea>
+            }
+
+            <button class="btn btn-primary" [disabled]="!canSubmitTransition"
+                    (click)="submitTransition()">
+              @if (actionLoading) { Updating... } @else { Update Status }
+            </button>
+          </div>
+        </div>
+      } @else {
+        <p class="muted">No status transitions available.</p>
+      }
+
+      @if (isAdmin && incident.status !== 'CLOSED') {
+        <div class="action-section">
+          <h3>Assign Engineer</h3>
+          <div class="action-form">
+            <select [(ngModel)]="selectedEngineerId" name="engineer">
+              <option [ngValue]="null">Select engineer</option>
+              @for (eng of engineers; track eng.id) {
+                <option [ngValue]="eng.id">{{ eng.username }} ({{ eng.role }})</option>
+              }
+            </select>
+            <button class="btn btn-primary" [disabled]="!canSubmitAssign"
+                    (click)="submitAssign()">
+              @if (actionLoading) { Assigning... } @else { Assign }
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="card history-card">
+    <h2>Audit History</h2>
+    @if (history.length === 0) {
+      <p class="muted">No history yet.</p>
+    } @else {
+      <div class="timeline">
+        @for (h of history; track h.id) {
+          <div class="timeline-entry">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="timeline-header">
+                <strong>{{ h.changedByUsername }}</strong>
+                changed <span class="field-name">{{ h.fieldChanged }}</span>
+                <span class="timeline-time">{{ h.createdAt | relativeTime }}</span>
+              </div>
+              <div class="timeline-values">
+                @if (h.oldValue) {
+                  <span class="old-value">{{ h.oldValue }}</span>
+                  <span class="arrow">→</span>
+                }
+                <span class="new-value">{{ h.newValue }}</span>
+              </div>
+              @if (h.changeNote) {
+                <div class="timeline-note">{{ h.changeNote }}</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

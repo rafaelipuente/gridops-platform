@@ -1,0 +1,98 @@
+.page-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.filters {
+  margin-bottom: 20px;
+  padding: 16px 20px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--color-text-secondary);
+}
+
+.filter-group select {
+  padding: 7px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  min-width: 160px;
+  outline: none;
+}
+
+.filter-group select:focus {
+  border-color: var(--color-accent);
+}
+
+.clear-btn {
+  margin-bottom: 1px;
+}
+
+.table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.col-number {
+  font-family: 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+
+.col-title {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-date {
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-secondary);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.page-info {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}

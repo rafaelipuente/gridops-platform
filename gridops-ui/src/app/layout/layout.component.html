@@ -1,0 +1,25 @@
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">⚡</span>
+      <span class="brand-text">GridOps</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+        Dashboard
+      </a>
+      <a routerLink="/assets" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}" class="nav-item">
+        Assets
+      </a>
+      <a routerLink="/incidents" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}" class="nav-item">
+        Incidents
+      </a>
+    </nav>
+  </aside>
+  <div class="main-area">
+    <app-navbar></app-navbar>
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,157 @@
+@if (loadingAsset) {
+  <div class="loading">Loading asset...</div>
+}
+
+@if (assetError) {
+  <div class="error-card card">
+    <p class="error-message">{{ assetError }}</p>
+    <a routerLink="/assets" class="btn btn-secondary">Back to Assets</a>
+  </div>
+}
+
+@if (asset) {
+  <div class="page-header">
+    <div class="breadcrumb">
+      <a routerLink="/assets">Assets</a>
+      <span class="separator">/</span>
+      <span>{{ asset.assetTag }}</span>
+    </div>
+    <h1>{{ asset.name }}</h1>
+    <div class="header-meta">
+      <app-status-badge [status]="asset.status"></app-status-badge>
+      <span class="meta-type">{{ asset.assetType }}</span>
+    </div>
+  </div>
+
+  <!-- Asset Info + Telemetry row -->
+  <div class="detail-grid">
+
+    <!-- Asset Metadata -->
+    <section class="card">
+      <h2 class="section-title">Asset Information</h2>
+      <dl class="info-list">
+        <div class="info-row">
+          <dt>Asset Tag</dt>
+          <dd class="mono">{{ asset.assetTag }}</dd>
+        </div>
+        <div class="info-row">
+          <dt>Type</dt>
+          <dd>{{ asset.assetType }}</dd>
+        </div>
+        <div class="info-row">
+          <dt>Status</dt>
+          <dd><app-status-badge [status]="asset.status"></app-status-badge></dd>
+        </div>
+        <div class="info-row">
+          <dt>Location</dt>
+          <dd>{{ asset.location || '—' }}</dd>
+        </div>
+        <div class="info-row">
+          <dt>Coordinates</dt>
+          <dd>{{ asset.latitude }}, {{ asset.longitude }}</dd>
+        </div>
+        <div class="info-row">
+          <dt>Installed</dt>
+          <dd>{{ asset.installedDate | date:'mediumDate' }}</dd>
+        </div>
+        <div class="info-row">
+          <dt>Created By</dt>
+          <dd>{{ asset.createdByUsername }}</dd>
+        </div>
+        <div class="info-row">
+          <dt>Last Updated</dt>
+          <dd>{{ asset.updatedAt | date:'medium' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- Telemetry -->
+    <section class="card telemetry-card">
+      <div class="section-header">
+        <h2 class="section-title">Live Telemetry</h2>
+        <button class="btn btn-secondary btn-sm" (click)="refreshTelemetry()" [disabled]="loadingTelemetry">
+          {{ loadingTelemetry ? 'Loading...' : 'Refresh' }}
+        </button>
+      </div>
+
+      @if (loadingTelemetry && !telemetry) {
+        <div class="loading">Loading telemetry...</div>
+      }
+
+      @if (telemetryError) {
+        <div class="telemetry-unavailable">
+          <div class="unavailable-icon">⚠</div>
+          <p>{{ telemetryError }}</p>
+          <button class="btn btn-secondary btn-sm" (click)="refreshTelemetry()">Retry</button>
+        </div>
+      }
+
+      @if (telemetry) {
+        <div class="telemetry-grid">
+          <div class="telemetry-metric">
+            <div class="metric-value" [class.metric-warning]="telemetry.temperatureCelsius > 70" [class.metric-critical]="telemetry.temperatureCelsius > 80">
+              {{ telemetry.temperatureCelsius }}°C
+            </div>
+            <div class="metric-label">Temperature</div>
+          </div>
+          <div class="telemetry-metric">
+            <div class="metric-value">{{ telemetry.loadPercent }}%</div>
+            <div class="metric-label">Load</div>
+          </div>
+          <div class="telemetry-metric">
+            <div class="metric-value">{{ telemetry.voltageKv }} kV</div>
+            <div class="metric-label">Voltage</div>
+          </div>
+          <div class="telemetry-metric">
+            <div class="metric-value">{{ telemetry.powerOutputMw }} MW</div>
+            <div class="metric-label">Power Output</div>
+          </div>
+        </div>
+        <div class="telemetry-footer">
+          <app-status-badge [status]="telemetry.status"></app-status-badge>
+          <span class="telemetry-time">{{ telemetry.timestamp | relativeTime }}</span>
+        </div>
+      }
+    </section>
+  </div>
+
+  <!-- Inspections -->
+  <section class="card inspections-section">
+    <h2 class="section-title">Inspection History</h2>
+
+    @if (loadingInspections) {
+      <div class="loading">Loading inspections...</div>
+    }
+
+    @if (inspectionError) {
+      <div class="error-message">{{ inspectionError }}</div>
+    }
+
+    @if (!loadingInspections && !inspectionError) {
+      @if (inspections.length === 0) {
+        <p class="empty-text">No inspections recorded for this asset.</p>
+      } @else {
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Condition</th>
+              <th>Inspector</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (insp of inspections; track insp.id) {
+              <tr>
+                <td>{{ insp.inspectionDate | date:'mediumDate' }}</td>
+                <td><app-status-badge [status]="insp.condition"></app-status-badge></td>
+                <td>{{ insp.inspectedByUsername }}</td>
+                <td class="col-notes">{{ insp.notes || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    }
+  </section>
+}

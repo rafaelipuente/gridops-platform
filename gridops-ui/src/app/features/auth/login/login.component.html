@@ -1,0 +1,49 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <span class="login-icon">⚡</span>
+      <h1>GridOps</h1>
+      <p>Utility Operations Platform</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          [(ngModel)]="username"
+          name="username"
+          placeholder="Enter username"
+          autocomplete="username"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="Enter password"
+          autocomplete="current-password"
+          [disabled]="loading"
+        />
+      </div>
+
+      @if (error) {
+        <div class="error-message">{{ error }}</div>
+      }
+
+      <button type="submit" class="btn btn-primary login-btn" [disabled]="loading">
+        {{ loading ? 'Signing in...' : 'Sign In' }}
+      </button>
+    </form>
+
+    <div class="login-hint">
+      <p>Demo credentials: <strong>kgarcia</strong> / <strong>password123</strong></p>
+    </div>
+  </div>
+</div>

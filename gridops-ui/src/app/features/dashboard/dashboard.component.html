@@ -1,0 +1,36 @@
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <p>System overview</p>
+</div>
+
+@if (loading) {
+  <div class="loading">Loading dashboard...</div>
+}
+
+@if (error) {
+  <div class="error-message">{{ error }}</div>
+}
+
+@if (summary) {
+  <div class="summary-grid">
+    <a routerLink="/assets" class="summary-card">
+      <div class="card-value">{{ summary.totalAssets }}</div>
+      <div class="card-label">Total Assets</div>
+    </a>
+
+    <a routerLink="/assets" [queryParams]="{status: 'OFFLINE'}" class="summary-card card-danger">
+      <div class="card-value">{{ summary.assetsOffline }}</div>
+      <div class="card-label">Assets Offline</div>
+    </a>
+
+    <div class="summary-card card-warning">
+      <div class="card-value">{{ summary.openIncidents }}</div>
+      <div class="card-label">Open Incidents</div>
+    </div>
+
+    <div class="summary-card card-critical">
+      <div class="card-value">{{ summary.criticalIncidents }}</div>
+      <div class="card-label">Critical Incidents</div>
+    </div>
+  </div>
+}

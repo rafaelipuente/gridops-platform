@@ -1,0 +1,8 @@
+<header class="top-bar">
+  <div class="top-bar-title">Utility Operations Platform</div>
+  <div class="top-bar-user">
+    <span class="user-role">{{ auth.getRole() }}</span>
+    <span class="user-name">{{ auth.getUsername() }}</span>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+</header>

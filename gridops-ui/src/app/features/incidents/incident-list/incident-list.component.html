@@ -1,0 +1,80 @@
+<div class="page-header">
+  <div class="page-header-row">
+    <div>
+      <h1>Incidents</h1>
+      <p>{{ totalElements }} incident{{ totalElements !== 1 ? 's' : '' }}</p>
+    </div>
+    <a routerLink="/incidents/new" class="btn btn-primary">New Incident</a>
+  </div>
+</div>
+
+<div class="filters card">
+  <div class="filter-row">
+    <div class="filter-group">
+      <label for="statusFilter">Status</label>
+      <select id="statusFilter" [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()">
+        <option value="">All statuses</option>
+        @for (s of statuses; track s) {
+          <option [value]="s">{{ s }}</option>
+        }
+      </select>
+    </div>
+
+    @if (statusFilter) {
+      <button class="btn btn-secondary clear-btn" (click)="clearFilter()">Clear filter</button>
+    }
+  </div>
+</div>
+
+@if (loading) {
+  <div class="loading">Loading incidents...</div>
+}
+
+@if (error) {
+  <div class="error-message">{{ error }}</div>
+}
+
+@if (!loading && !error) {
+  @if (incidents.length === 0) {
+    <div class="empty-state card">
+      <p>No incidents found.</p>
+    </div>
+  } @else {
+    <div class="card table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Number</th>
+            <th>Title</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Reported By</th>
+            <th>Assigned To</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (inc of incidents; track inc.id) {
+            <tr [routerLink]="['/incidents', inc.id]" class="clickable-row">
+              <td class="col-number">{{ inc.incidentNumber }}</td>
+              <td class="col-title">{{ inc.title }}</td>
+              <td><app-status-badge [status]="inc.severity"></app-status-badge></td>
+              <td><app-status-badge [status]="inc.status"></app-status-badge></td>
+              <td>{{ inc.reportedByUsername }}</td>
+              <td>{{ inc.assignedToUsername || '—' }}</td>
+              <td class="col-date">{{ inc.createdAt | relativeTime }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <button class="btn btn-secondary" [disabled]="page === 0" (click)="goToPage(page - 1)">Previous</button>
+        <span class="page-info">Page {{ page + 1 }} of {{ totalPages }}</span>
+        <button class="btn btn-secondary" [disabled]="page >= totalPages - 1" (click)="goToPage(page + 1)">Next</button>
+      </div>
+    }
+  }
+}
